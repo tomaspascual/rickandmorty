@@ -2,12 +2,16 @@ package com.adultswim.rickandmorty.component;
 
 import com.adultswim.rickandmorty.entity.Characters;
 import com.adultswim.rickandmorty.entity.SpecificCharacters;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
 
 @Component
 public class PopularityComparator implements Comparator<SpecificCharacters> {
+
+    @Value("${rickandmorty.url.numCharacters}")
+    public int numCharacters;
 
     @Override
     public int compare(SpecificCharacters firstCharacter, SpecificCharacters secondCharacter) {
