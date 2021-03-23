@@ -82,7 +82,7 @@ public class APIClient {
 
         return wc
                 .get()
-                .accept(MediaType.APPLICATION_JSON)
+                //.accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToFlux(SpecificCharacters.class)
                 .map(specificCharacters -> {
