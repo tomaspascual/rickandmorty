@@ -53,19 +53,21 @@ public class APIClient {
 
     public Mono<List<SpecificCharacters>> retrieveUpTo5CharacterOrderedByPopularity(Set excludedCharacters) throws SSLException {
 
-
         int numberOfCharactersToShow = ThreadLocalRandom.current().nextInt(1, 6);
         String[] charactersList = new String[numberOfCharactersToShow];
 
+        // Lets select which characters will be show
         int fullFilled = 0;
         while (fullFilled < numberOfCharactersToShow) {
             String possibleCharacterToShow = ThreadLocalRandom.current().nextInt(1, numCharacters) + "";
+            // consider exclusions
             if (!excludedCharacters.contains(possibleCharacterToShow)) {
                 charactersList[fullFilled] = possibleCharacterToShow;
                 fullFilled++;
             }
         }
 
+        // Webclient that trusts any external SSL certificate
         SslContext sslContext = SslContextBuilder
                 .forClient()
                 .trustManager(InsecureTrustManagerFactory.INSTANCE)
@@ -92,7 +94,7 @@ public class APIClient {
                     logger.error(ex);
                     return Mono.empty();
                 })
-                .collectSortedList(popularityComparator.reversed());
+                .collectSortedList(popularityComparator.reversed()); // The Comparator will order based in the popularity index declared inside
 
     }
 
