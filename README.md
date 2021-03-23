@@ -9,8 +9,7 @@ GET /api/rickandmorti
 GET /api/rickandmorty?excluded=1,2,3
 
 
-# Execution after Dockerization
-### Obviously you'll need Docker installer in your environment
+# To startup the environment with Docker
 
 - mvn --batch-mode verify -P docker
 
