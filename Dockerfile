@@ -17,6 +17,7 @@ FROM alpine:latest
 
 ENV JAVA_HOME=/opt/java-minimal
 ENV PATH="$PATH:$JAVA_HOME/bin"
+ENV JAVA_OPTS="-Dhttps.protocols=TLSv1.1,TLSv1.2"
 
 #unsafe: Secure this setting
 USER root

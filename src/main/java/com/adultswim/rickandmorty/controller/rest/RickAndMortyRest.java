@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
+import javax.net.ssl.SSLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -26,7 +27,7 @@ public class RickAndMortyRest {
     static final Log logger = LogFactory.getLog(RickAndMortyRest.class);
 
     @GetMapping(value="/rickandmorty")
-    public Mono<List<SpecificCharacters>> retrieveUpTo5CharacterOrderedByPopularity(@RequestParam Optional<List<String>> excluded) {
+    public Mono<List<SpecificCharacters>> retrieveUpTo5CharacterOrderedByPopularity(@RequestParam Optional<List<String>> excluded) throws SSLException {
 
         if (excluded.isPresent()) {
             return apiClient.retrieveUpTo5CharacterOrderedByPopularity(Set.copyOf(excluded.get()));

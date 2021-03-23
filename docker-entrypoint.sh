@@ -18,4 +18,4 @@ set
 
 echo now lets execute the application
 
-java -jar /app.jar --server.port=8080 -Dhttps.protocols=TLSv1.2,TLSv1.1,TLSv1
+java -jar /app.jar --server.port=8080

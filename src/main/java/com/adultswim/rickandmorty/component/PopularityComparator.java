@@ -15,8 +15,8 @@ public class PopularityComparator implements Comparator<SpecificCharacters> {
     }
 
     public int popularityCalculator(SpecificCharacters character) {
-        // To make it easy lets consider a character popularity is simply calculated based on the amount of episodes it appears into
-        // This assumption considers a popularityIndex can be, obviously, repeated across all characters several times per index.
+        // To make it easier lets consider popularity index is simply calculated based on the amount of episodes it appears into
+        // This assumption considers popularity index can be, obviously, repeated across all characters several times (per index).
         return character.getEpisode().size();
     }
 
