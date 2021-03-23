@@ -18,11 +18,10 @@ FROM alpine:latest
 ENV JAVA_HOME=/opt/java-minimal
 ENV PATH="$PATH:$JAVA_HOME/bin"
 
+#unsafe: Secure this setting
 USER root
 COPY /docker-entrypoint.sh /docker-entrypoint.sh
 RUN ["chmod", "+x", "/docker-entrypoint.sh"]
-
-USER appuser
 
 COPY --from=packager "$JAVA_HOME" "$JAVA_HOME"
 COPY target/app.jar app.jar
