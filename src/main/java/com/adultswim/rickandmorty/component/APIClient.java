@@ -2,6 +2,7 @@ package com.adultswim.rickandmorty.component;
 
 import com.adultswim.rickandmorty.entity.Characters;
 import com.adultswim.rickandmorty.entity.SpecificCharacters;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
@@ -16,9 +17,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ClientHttpConnector;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.http.codec.ClientCodecConfigurer;
+import org.springframework.http.codec.json.Jackson2JsonDecoder;
+import org.springframework.http.codec.json.Jackson2JsonEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.ClientResponse;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -28,6 +33,7 @@ import reactor.netty.tcp.TcpClient;
 import javax.net.ssl.SSLException;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -67,22 +73,18 @@ public class APIClient {
             }
         }
 
-        // Webclient that trusts any external SSL certificate
-        SslContext sslContext = SslContextBuilder
-                .forClient()
-                .trustManager(InsecureTrustManagerFactory.INSTANCE)
-                .build();
-        HttpClient httpClient = HttpClient.create().secure(ssl -> { ssl.sslContext(sslContext); });
-        ClientHttpConnector httpConnector = new ReactorClientHttpConnector(httpClient);
+        logger.info("PATH: " + String.join(",", charactersList));
+
         WebClient wc =  WebClient
                 .builder()
                 .baseUrl(charactersUrl + "/" + String.join(",", charactersList))
-                .clientConnector(httpConnector)
+                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .defaultHeader(HttpHeaders.ACCEPT_CHARSET, MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .exchangeStrategies(ExchangeStrategies.builder().codecs(this::acceptedCodecs).build())
                 .build();
 
         return wc
                 .get()
-                //.accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToFlux(SpecificCharacters.class)
                 .map(specificCharacters -> {
@@ -96,6 +98,12 @@ public class APIClient {
                 })
                 .collectSortedList(popularityComparator.reversed()); // The Comparator will order based in the popularity index declared inside
 
+    }
+
+
+    private void acceptedCodecs(ClientCodecConfigurer clientCodecConfigurer) {
+        clientCodecConfigurer.customCodecs().register(new Jackson2JsonEncoder(new ObjectMapper(), MediaType.APPLICATION_JSON));
+        clientCodecConfigurer.customCodecs().register(new Jackson2JsonDecoder(new ObjectMapper(), MediaType.TEXT_PLAIN));
     }
 
 
