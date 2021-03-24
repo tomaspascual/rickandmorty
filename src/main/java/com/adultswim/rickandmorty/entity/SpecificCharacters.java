@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +18,6 @@ import java.util.Map;
 @Getter
 @Setter
 public class SpecificCharacters {
-
 
     private Integer id;
     private String name;
